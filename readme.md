@@ -12,6 +12,7 @@
 
 ## Parameter Setting
 * See `amd-dpc/parameter` directory.
+* If you want to test a distance function other than L1 and L2, you can implement the function in
 
 ## How to Run
 * Compile: `g++ -O3 -o amd-dpc.out main.cpp --std=c++14 -fopenmp -Wall`
@@ -20,14 +21,12 @@
 * We used Ubuntu 18.04 LTS.
 
 ## Result
-* Crest `result` directory.
+* Creat `result` directory.
 * For each dataset, the experimental result is provided in the corresponding directory.
    * Dataset IDs of Gas, Household, PAMAP2, and Mirai are 3, 1, 2, and 4, respectively.
    * Create `result/x-y`, where x is dataset ID and y is dataset name.
 * We calculated accuracy (e.g., NMI) by using scikit-learn library.
    * As our algorithm maintains (approximate) local density and dependent point for each object, it is straightforward to implement codes for obtaining the clustering result of any time.
-
-
 
 ## Citation
 If you use our implementation, please cite the following paper.
