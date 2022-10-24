@@ -8,7 +8,7 @@
 * [Household](https://archive.ics.uci.edu/ml/datasets/Individual+household+electric+power+consumption)
 * [PAMAP2](https://archive.ics.uci.edu/ml/datasets/PAMAP2+Physical+Activity+Monitoring)
 * [Mirai](https://archive.ics.uci.edu/ml/datasets/Kitsune+Network+Attack+Dataset)
-* Our code allows .csv file (each row is a d-dimensional vector where each dimension is separeted by comma).
+* Our code allows a .csv file (each row is a d-dimensional vector where each dimension is separeted by comma) as input.
 
 ## Parameter Setting
 * See `amd-dpc/parameter` directory.
