@@ -39,3 +39,7 @@ If you use our implementation, please cite the following paper.
     pages={xx--xx},  
     year={2022}  
 }
+
+## License
+Copyright (c) 2022 Daichi Amagata  
+This software is released under the [MIT license](https://github.com/amgt-d1/AMD-DPC/blob/main/license.txt).
