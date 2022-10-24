@@ -32,7 +32,7 @@
 If you use our implementation, please cite the following paper.
 ``` 
 @inproceedings{amagata2022scalable,  
-    title={Fast Density-Peaks Clustering: Multicore-based Parallelization Approach},  
+    title={Scalable and Accurate Density-Peaks Clustering on Fully Dynamic Data},  
     author={Amagata, Daichi},  
     booktitle={IEEE BigData},  
     pages={xx--xx},  
