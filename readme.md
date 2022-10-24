@@ -1,6 +1,6 @@
 ## Introduction
-* This repository provides implementations of AMD-DPC.
-* This is a fast approximation algorithm for [density-peaks clustering](https://science.sciencemag.org/content/344/6191/1492.full) (proposed in Science) on fully dynamic data.
+* This repository provides implementation of AMD-DPC.
+* This is a fast approximation algorithm for [density-peaks clustering](https://science.sciencemag.org/content/344/6191/1492.full) (proposed in Science) on fully dynamic data in any metric space.
 * As for the details about AMD-DPC, please read our IEEE BigData 2022 paper, [Scalable and Accurate Density-Peaks Clustering on Fully Dynamic Data](https://).
 
 ## Datasets
