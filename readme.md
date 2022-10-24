@@ -1,7 +1,7 @@
 ## Introduction
 * This repository provides implementation of AMD-DPC.
 * This is a fast approximation algorithm for [density-peaks clustering](https://science.sciencemag.org/content/344/6191/1492.full) (proposed in Science) on fully dynamic data in any metric space.
-* As for the details about AMD-DPC, please read our IEEE BigData 2022 paper, [Scalable and Accurate Density-Peaks Clustering on Fully Dynamic Data](https://).
+* As for the detail about AMD-DPC, please read our IEEE BigData 2022 paper, [Scalable and Accurate Density-Peaks Clustering on Fully Dynamic Data](https://).
 
 ## Datasets
 * [Gas](https://archive.ics.uci.edu/ml/datasets/Gas+sensor+array+under+dynamic+gas+mixtures)
