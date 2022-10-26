@@ -1,8 +1,8 @@
 #include "pg_msp.hpp"
 
 
-int main() {
-
+int main()
+{
     // input parameter
     input_parameter();
 
@@ -43,16 +43,17 @@ int main() {
 
 
     /****** start dynamic clustering  ******/
-    while (1) {
-
+    while (1)
+	{
         // determine insertion or deletion; 1: insertion, 0: deletion
         bool flag = 1;
-        if (idx_insertion >= freq) {
+        if (idx_insertion >= freq)
+		{
             if (rnd(mt) <= deletion_rate) flag = 0;
         }
 
-        if (flag) {
-
+        if (flag)
+		{
             /**** main update start ****/
             start = std::chrono::system_clock::now();
 
@@ -86,8 +87,8 @@ int main() {
             // increment idx
             ++idx_insertion;
         }
-        else {
-
+        else
+		{
             // get deleted data
             data* dat = &dataset[idx_deletion];
 
@@ -121,8 +122,8 @@ int main() {
         ++counter;
 
         // if no more object cannot be inserted, break after output
-        if (idx_insertion == dataset.size() - 1) {    
-
+        if (idx_insertion == dataset.size() - 1)
+		{
             // get current memory [MB]
             memory = process_mem_usage() - memory_init;
 
@@ -132,8 +133,8 @@ int main() {
             break;
         }
 
-        if (counter % freq == 0) {
-
+        if (counter % freq == 0)
+		{
             // print
             std::cout << " " << counter << " updates over\n";
  
@@ -143,8 +144,6 @@ int main() {
             // output intermediate result
             output_result(counter, 1);
         }
-
-        if (counter % 100000 == 0) output_statistics(counter, dataset_active);
     }
 
     return 0;
