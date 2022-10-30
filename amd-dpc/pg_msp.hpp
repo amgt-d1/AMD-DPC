@@ -31,8 +31,8 @@ std::unordered_set<unsigned int> pool;
 
 
 // greedy decision of dependent point
-void get_dependent_point(data* dat) {
-
+void get_dependent_point(data* dat)
+{
     // candidate list
     std::pair<float, unsigned int> candidate = {FLT_MAX, dat->identifier};
 
@@ -49,9 +49,11 @@ void get_dependent_point(data* dat) {
     float distance = compute_distance(&dataset[start_node], dat);
 
     // update candidate
-    if (dataset[start_node].flag_active) {
+    if (dataset[start_node].flag_active)
+    {
         if (dataset[start_node].local_density > dat->local_density) candidate = {distance, start_node};
-        if (dataset[start_node].local_density < dat->local_density) {
+        if (dataset[start_node].local_density < dat->local_density)
+        {
             if (dataset[start_node].dependent_distance > distance) dataset[start_node].dependent_distance = distance;
         }
     }
@@ -71,8 +73,8 @@ void get_dependent_point(data* dat) {
     visit.insert(start_node);
     
     /*** ANN search ***/
-    while (queue_nn.size() > 0) {
-
+    while (queue_nn.size() > 0)
+    {
         // get the top
         const unsigned int id = queue_nn[0];
 
@@ -83,14 +85,14 @@ void get_dependent_point(data* dat) {
         id_min = id;
 
         // graph traversal
-        for (unsigned int i = 0; i < dataset[id].edges.size(); ++i) {
-
+        for (unsigned int i = 0; i < dataset[id].edges.size(); ++i)
+        {
             // get id
             const unsigned int id_ = dataset[id].edges[i];
 
             // visit check
-            if (visit.find(id_) == visit.end()) {
-
+            if (visit.find(id_) == visit.end())
+            {
                 // mark as visit
                 visit.insert(id_);
 
@@ -98,14 +100,16 @@ void get_dependent_point(data* dat) {
                 distance = compute_distance(&dataset[id_], dat);
 
                 // candidate update
-                if (dataset[id_].flag_active) {
-                    if (dataset[id_].local_density > dat->local_density) {
-                        if (distance <= cutoff * 2.0) {
-
+                if (dataset[id_].flag_active)
+                {
+                    if (dataset[id_].local_density > dat->local_density)
+                    {
+                        if (distance <= cutoff * 2.0)
+                        {
                             // update flag
                             flag = 1;
 
-                            // update dependecy
+                            // update dependency
                             dat->dependent_distance = distance;
                             dat->dependent_point_id = id_;
 
@@ -115,14 +119,16 @@ void get_dependent_point(data* dat) {
                         if (candidate.first > distance) candidate = {distance, id_};
                     }
 
-                    // update dependecy
-                    if (dataset[id_].local_density < dat->local_density) {
+                    // update dependency
+                    if (dataset[id_].local_density < dat->local_density)
+                    {
                         if (dataset[id_].dependent_distance > distance) dataset[id_].dependent_distance = distance;
                     }
                 }
 
                 // NN update case
-                if (distance < threshold) {
+                if (distance < threshold)
+                {
                     threshold = distance;
                     id_min = id_;
                 }
@@ -135,14 +141,15 @@ void get_dependent_point(data* dat) {
         if (flag) break;
 
         // queue & route update
-        if (id_min != id) {
+        if (id_min != id)
+        {
             queue_nn.push_back(id_min);
             route.push_front(id_min);
         }
     }
 
-    if (flag == 0) {
-
+    if (flag == 0)
+    {
         // init visited nodes
         visit.clear();
 
@@ -150,8 +157,8 @@ void get_dependent_point(data* dat) {
         std::vector<unsigned int> verification;
 
         // init queue
-        if (threshold <= cutoff * 2.5) {
-
+        if (threshold <= cutoff * 2.5)
+        {
             // mark as visit
             visit.insert(id_min);
 
@@ -160,8 +167,8 @@ void get_dependent_point(data* dat) {
         }
 
         /*** range search ***/
-        while (queue_range.size() > 0 && flag == 0) {
-
+        while (queue_range.size() > 0 && flag == 0)
+        {
             // get the top
             const unsigned int id = queue_range[0];
 
@@ -169,14 +176,14 @@ void get_dependent_point(data* dat) {
             queue_range.pop_front();
 
             // graph traversal
-            for (unsigned int i = 0; i < dataset[id].edges.size(); ++i) {
-
+            for (unsigned int i = 0; i < dataset[id].edges.size(); ++i)
+            {
                 // get id
                 const unsigned int id_ = dataset[id].edges[i];
 
                 // visit check
-                if (visit.find(id_) == visit.end()) {
-
+                if (visit.find(id_) == visit.end())
+                {
                     // mark as visit
                     visit.insert(id_);
 
@@ -184,10 +191,12 @@ void get_dependent_point(data* dat) {
                     const float distance = compute_distance(&dataset[id_], dat);
 
                     // candidate update
-                    if (dataset[id_].flag_active) {
-                        if (dataset[id_].local_density > dat->local_density) {
-                            if (distance <= cutoff * 2.0) {
-
+                    if (dataset[id_].flag_active)
+                    {
+                        if (dataset[id_].local_density > dat->local_density)
+                        {
+                            if (distance <= cutoff * 2.0)
+                            {
                                 // update dependency
                                 dat->dependent_distance = threshold;
                                 dat->dependent_point_id = id_;
@@ -197,21 +206,24 @@ void get_dependent_point(data* dat) {
 
                                 break;
                             }
-                            else {
+                            else
+                            {
                                 if (candidate.first > distance) candidate = {distance, id_};
                             }
                         }
 
                         // update dependency
-                        if (dataset[id_].local_density < dat->local_density) {
+                        if (dataset[id_].local_density < dat->local_density)
+                        {
                             if (dataset[id_].dependent_distance > distance) dataset[id_].dependent_distance = distance;
                         }
                     }
 
                     // update queue
-                    if (flag == 0) {
-                        if (distance <= cutoff * 2.5) {
-
+                    if (flag == 0)
+                    {
+                        if (distance <= cutoff * 2.5)
+                        {
                             queue_range.push_back(id_);
 
                             // store point that needs verification
@@ -223,45 +235,47 @@ void get_dependent_point(data* dat) {
         }
 
         /*** verification ***/
-        if (flag == 0) {
-                
+        if (flag == 0)
+        {                
             std::vector<std::pair<float, unsigned int>> dep(thread_num);
             for (unsigned int i = 0; i < thread_num; ++i) dep[i] = {FLT_MAX, dat->identifier};
 
             #pragma omp parallel num_threads(thread_num)
             {
-                for (unsigned int i = 0; i < verification.size(); ++i) {
-
+                for (unsigned int i = 0; i < verification.size(); ++i)
+                {
                     // get id
                     const unsigned int id = verification[i];
 
                     #pragma omp for schedule(static)
-                    for (unsigned int j = 0; j < dataset[id].member.size(); ++j) {
-
+                    for (unsigned int j = 0; j < dataset[id].member.size(); ++j)
+                    {
                         // get id_
                         const unsigned int id_ = dataset[id].member[j];
 
                         if (flag == 0) {
-                            if (dataset[id_].flag_active) {
-
+                            if (dataset[id_].flag_active)
+                            {
                                 // distance computation
                                 const float distance = compute_distance(dat, &dataset[id_]);
 
-                                // dependecy update (local)
-                                if (dataset[id_].local_density > dat->local_density) {
-
-                                    if (distance <= 2.0 * cutoff) {
-
+                                // dependency update (local)
+                                if (dataset[id_].local_density > dat->local_density)
+                                {
+                                    if (distance <= 2.0 * cutoff)
+                                    {
                                         flag = 1;
                                         dep[omp_get_thread_num()] = {distance, id_};
                                     }
-                                    else {
+                                    else
+                                    {
                                         if (dep[omp_get_thread_num()].first > distance) dep[omp_get_thread_num()] = {distance, id_};
                                     }
                                 }
 
                                 // update dependency
-                                if (dataset[id_].local_density < dat->local_density) {
+                                if (dataset[id_].local_density < dat->local_density)
+                                {
                                     if (dataset[id_].dependent_distance > distance) dataset[id_].dependent_distance = distance;
                                 }
                             }
@@ -271,18 +285,20 @@ void get_dependent_point(data* dat) {
             }
 
             // reduction
-            for (unsigned int i = 0; i < thread_num; ++i) {
-
-                if (dat->dependent_distance > dep[i].first) {
+            for (unsigned int i = 0; i < thread_num; ++i)
+            {
+                if (dat->dependent_distance > dep[i].first)
+                {
                     dat->dependent_distance = dep[i].first;
                     dat->dependent_point_id = dep[i].second;
                 }
             }
 
             // refinement
-            if (dat->dependent_distance > cutoff * 2.0) {
-
-                if (candidate.first < dat->dependent_distance) {
+            if (dat->dependent_distance > cutoff * 2.0)
+            {
+                if (candidate.first < dat->dependent_distance)
+                {
                     dat->dependent_distance = candidate.first;
                     dat->dependent_point_id = candidate.second;
                 }
@@ -292,10 +308,11 @@ void get_dependent_point(data* dat) {
 }
 
 // scan for finding dependent point
-void get_dependent_point_scan(data* dat) {
-
-    // init dependecy
-    if (dat->local_density >= dataset[dat->dependent_point_id].local_density) {
+void get_dependent_point_scan(data* dat)
+{
+    // init dependency
+    if (dat->local_density >= dataset[dat->dependent_point_id].local_density)
+    {
         dat->dependent_distance = compute_distance(dat, &dataset[id_local_density_max]);
         dat->dependent_point_id = id_local_density_max;
     }
@@ -307,7 +324,8 @@ void get_dependent_point_scan(data* dat) {
     // make vector
     std::vector<unsigned int> pool_vec;
     auto it = pool.begin();
-    while (it != pool.end()) {
+    while (it != pool.end())
+    {
         pool_vec.push_back(*it);
         ++it;
     }
@@ -315,24 +333,26 @@ void get_dependent_point_scan(data* dat) {
     #pragma omp parallel num_threads(thread_num)
     {
         #pragma omp for schedule(static)
-        for (unsigned int i = 0; i < pool_vec.size(); ++i) {
-
+        for (unsigned int i = 0; i < pool_vec.size(); ++i)
+        {
             // get id
             const unsigned int id = pool_vec[i];
 
             // distance computation
             const float distance = compute_distance(dat, &dataset[id]);
 
-            if (dat->local_density < dataset[id].local_density) {
-
-                if (dep[omp_get_thread_num()].first > distance) {
+            if (dat->local_density < dataset[id].local_density)
+            {
+                if (dep[omp_get_thread_num()].first > distance)
+                {
                     dep[omp_get_thread_num()].first = distance;
                     dep[omp_get_thread_num()].second =dat->identifier;
                 }
             }
-            else {
-
-                if (dataset[id].dependent_distance > distance) {
+            else
+            {
+                if (dataset[id].dependent_distance > distance)
+                {
                     dataset[id].dependent_distance = distance;
                     dataset[id].dependent_point_id = dat->identifier;
                 }
@@ -341,8 +361,8 @@ void get_dependent_point_scan(data* dat) {
     }
 
     // reduction
-    for (unsigned int i = 0; i < thread_num; ++i) {
-        
+    for (unsigned int i = 0; i < thread_num; ++i)
+    {        
         if (dat->dependent_distance > dep[i].first) {
             dat->dependent_distance = dep[i].first;
             dat->dependent_point_id = dep[i].second;
@@ -354,8 +374,8 @@ void get_dependent_point_scan(data* dat) {
 }
 
 // local density update (insertion case)
-void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_update, std::deque<data*> &dataset_active, data* dat) {
-
+void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_update, std::deque<data*> &dataset_active, data* dat)
+{
     // init
     local_density_max_update = 0;
     id_local_density_max_update = dat->identifier;
@@ -371,8 +391,8 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
     // init dep. point
     dat->dependent_point_id = dat->identifier;
 
-    if (dat->identifier > 0) {
-
+    if (dat->identifier > 0)
+    {
         // get start node
         const unsigned int start_node = 0;
 
@@ -406,8 +426,8 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
         knn_list.push_back({distance, start_node});
 
         /*** ANN search ***/
-        while (queue_nn.size() > 0) {
-
+        while (queue_nn.size() > 0)
+        {
             // get the top
             const unsigned int id = queue_nn[0];
 
@@ -418,14 +438,14 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
             id_min = id;
 
             // graph traversal
-            for (unsigned int i = 0; i < dataset[id].edges.size(); ++i) {
-
+            for (unsigned int i = 0; i < dataset[id].edges.size(); ++i)
+            {
                 // get id
                 const unsigned int id_ = dataset[id].edges[i];
 
                 // visit check
-                if (visit.find(id_) == visit.end()) {
-
+                if (visit.find(id_) == visit.end())
+                {
                     // mark as visit
                     visit.insert(id_);
 
@@ -436,7 +456,8 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
                     knn_list.push_back({distance, id_});
 
                     // NN update case
-                    if (distance < threshold) {
+                    if (distance < threshold)
+                    {
                         threshold = distance;
                         id_min = id_;
                     }
@@ -447,7 +468,8 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
             }
 
             // queue & route update
-            if (id_min != id) {
+            if (id_min != id)
+            {
                 queue_nn.push_back(id_min);
                 route.push_front(id_min);
             }
@@ -457,22 +479,24 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
         visit.clear();
 
         // init queue
-        if (threshold <= cutoff * 1.5) {
-
-            if (dataset[id_min].flag_active) {
-
-                if (threshold <= cutoff) {
-
+        if (threshold <= cutoff * 1.5)
+        {
+            if (dataset[id_min].flag_active)
+            {
+                if (threshold <= cutoff)
+                {
                     // update local density
                     dat->local_density += 1.0;
                     dataset[id_min].local_density += 1.0;
 
                     // update max of local density
-                    if (dataset[id_min].local_density > local_density_max_update) {
+                    if (dataset[id_min].local_density > local_density_max_update)
+                    {
                         local_density_max_update = dataset[id_min].local_density;
                         id_local_density_max_update = id_min;
                     }
-                    if (dataset[id_min].local_density > local_density_max) {
+                    if (dataset[id_min].local_density > local_density_max)
+                    {
                         local_density_max = dataset[id_min].local_density;
                         id_local_density_max = id_min;
                     }
@@ -493,16 +517,16 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
             if (dataset[id_min].member.size() > 0) verification.push_back(id_min);
 
             // member update
-            if (threshold <= cutoff / 2.0 && rnd(mt) <= 0.995) {
-
+            if (threshold <= cutoff / 2.0 && rnd(mt) <= 0.995)
+            {
                 dat->parent = id_min;
                 dat->flag_pivot = 0;
             }
         }
 
         /*** range search ***/
-        while (queue_range.size() > 0) {
-
+        while (queue_range.size() > 0)
+        {
             // get the top
             const unsigned int id = queue_range[0];
 
@@ -510,14 +534,14 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
             queue_range.pop_front();
 
             // graph traversal
-            for (unsigned int i = 0; i < dataset[id].edges.size(); ++i) {
-
+            for (unsigned int i = 0; i < dataset[id].edges.size(); ++i)
+            {
                 // get id
                 const unsigned int id_ = dataset[id].edges[i];
 
                 // visit check
-                if (visit.find(id_) == visit.end()) {
-
+                if (visit.find(id_) == visit.end())
+                {
                     // mark as visit
                     visit.insert(id_);
 
@@ -527,8 +551,8 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
                     // store kNN candidate
                     knn_list.push_back({distance, id_});
 
-                    if (distance <= cutoff * 1.5) {
-
+                    if (distance <= cutoff * 1.5)
+                    {
                         // update queue
                         queue_range.push_back(id_);
 
@@ -536,17 +560,19 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
                         dataset[id_].distance_temp = distance;
 
                         // update local density
-                        if (distance <= cutoff && dataset[id_].flag_active == 1) {
-
+                        if (distance <= cutoff && dataset[id_].flag_active == 1)
+                        {
                             dataset[id_].local_density += 1.0;
                             dat->local_density += 1.0;
 
                             // update max of local density
-                            if (dataset[id_].local_density > local_density_max) {
+                            if (dataset[id_].local_density > local_density_max)
+                            {
                                 local_density_max = dataset[id_].local_density;
                                 id_local_density_max = id_;
                             }
-                            if (dataset[id_].local_density > local_density_max_update) {
+                            if (dataset[id_].local_density > local_density_max_update)
+                            {
                                 local_density_max_update = dataset[id_].local_density;
                                 id_local_density_max_update = id_;
                             }
@@ -568,8 +594,8 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
 
         #pragma omp parallel num_threads(thread_num)
         {
-            for (unsigned int i = 0; i < verification.size(); ++i) {
-
+            for (unsigned int i = 0; i < verification.size(); ++i)
+            {
                 // get id
                 const unsigned int id = verification[i];
 
@@ -577,15 +603,15 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
                 if (dataset[id].distance_temp <= cutoff / 2.0) f = 1;
 
                 #pragma omp for schedule(static) reduction(+:local_density)
-                for (unsigned int j = 0; j < dataset[id].member.size(); ++j) {
-
+                for (unsigned int j = 0; j < dataset[id].member.size(); ++j)
+                {
                     // get id_
                     const unsigned int id_ = dataset[id].member[j];
 
-                    if (f) {
-
-                        if (dataset[id_].flag_active) {
-
+                    if (f)
+                    {
+                        if (dataset[id_].flag_active)
+                        {
                             // local density update
                             local_density = local_density + 1.0;
                             dataset[id_].local_density = dataset[id_].local_density + 1.0;
@@ -599,14 +625,14 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
                             if (max_update[omp_get_thread_num()].first < dataset[id_].local_density) max_update[omp_get_thread_num()] = {dataset[id_].local_density,id_};
                         }
                     }
-                    else {
-
-                        if (dataset[id_].flag_active) {
-
+                    else
+                    {
+                        if (dataset[id_].flag_active)
+                        {
                             const float distance = compute_distance(dat, &dataset[id_]);
 
-                            if (distance <= cutoff) {
-
+                            if (distance <= cutoff)
+                            {
                                 // local density update
                                 local_density = local_density + 1.0;
                                 dataset[id_].local_density = dataset[id_].local_density + 1.0;
@@ -635,26 +661,28 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
         dataset_rho_update.push_back(dat->identifier);
 
         // update local_density_max_update
-        for (unsigned int i = 0; i < thread_num; ++i) {
-
-            if (max_update[i].first > local_density_max_update) {
-
+        for (unsigned int i = 0; i < thread_num; ++i)
+        {
+            if (max_update[i].first > local_density_max_update)
+            {
                 local_density_max_update = max_update[i].first;
                 id_local_density_max_update = max_update[i].second;
             }
-            if (max_update[i].first > local_density_max) {
-
+            if (max_update[i].first > local_density_max)
+            {
                 local_density_max = max_update[i].first;
                 id_local_density_max = max_update[i].second;
             }
 
             for (unsigned int j = 0; j < rho_update[i].size(); ++j) dataset_rho_update.push_back(rho_update[i][j]);
         }
-        if (dat->local_density > local_density_max_update) {
+        if (dat->local_density > local_density_max_update)
+        {
             local_density_max_update = dat->local_density;
             id_local_density_max_update = dat->identifier;
         }
-        if (dat->local_density > local_density_max) {
+        if (dat->local_density > local_density_max)
+        {
             local_density_max = dat->local_density;
             id_local_density_max = dat->identifier;
         }
@@ -665,10 +693,10 @@ void update_local_density_insertion(std::vector<unsigned int> &dataset_rho_updat
 }
 
 // graph update
-void update_graph(std::vector<unsigned int> &dataset_rho_update, data* dat) {
-
-    if (dat->flag_pivot) {
-
+void update_graph(std::vector<unsigned int> &dataset_rho_update, data* dat)
+{
+    if (dat->flag_pivot)
+    {
         // set itself as parent
         dat->parent = dat->identifier;
 
@@ -679,12 +707,12 @@ void update_graph(std::vector<unsigned int> &dataset_rho_update, data* dat) {
         std::sort(knn_list.begin(), knn_list.end());
 
         // connect to AkNN
-        for (unsigned int i = 0; i < knn_list.size(); ++i) {
-
+        for (unsigned int i = 0; i < knn_list.size(); ++i)
+        {
             const unsigned int id = knn_list[i].second;
 
-            if (edges.find(id) == edges.end()) {
-
+            if (edges.find(id) == edges.end())
+            {
                 dataset[id].edges.push_back(dat->identifier);
                 dat->edges.push_back(id);
                 edges.insert(id);
@@ -696,36 +724,39 @@ void update_graph(std::vector<unsigned int> &dataset_rho_update, data* dat) {
         // making a skip monotonic path
         unsigned int id = route[0];
 
-        if (route.size() < path_length) {
-
-            for (unsigned int j = 0; j < route.size(); ++j) {
-
-                if (dataset[route[j]].level == dat->level) {
+        if (route.size() < path_length)
+        {
+            for (unsigned int j = 0; j < route.size(); ++j)
+            {
+                if (dataset[route[j]].level == dat->level)
+                {
                     id = route[j];
                     break;
                 }
             }
         }
-        else {
-
+        else
+        {
             unsigned int size = 2;
-            while (1) {
+            while (1)
+            {
                 if ((route.size() / size) < path_length) break;
                 size *= 2;
             }
             id = route[route.size() / size];
         }
 
-        if (id != 0)  {
-
-            if (edges.find(id) == edges.end()) {
+        if (id != 0)
+        {
+            if (edges.find(id) == edges.end())
+            {
                 dataset[id].edges.push_back(dat->identifier);
                 dat->edges.push_back(id);
             }
         }
     }
-    else {
-
+    else
+    {
         // member update
         dataset[dat->parent].member.push_back(dat->identifier);
     }
@@ -734,8 +765,8 @@ void update_graph(std::vector<unsigned int> &dataset_rho_update, data* dat) {
 }
 
 // dependent point update (insertion case)
-void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_update, std::deque<data*> &dataset_active, data* dat) {
-
+void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_update, std::deque<data*> &dataset_active, data* dat)
+{
     bool f = 0;
 
     std::vector<std::unordered_set<unsigned int>> local_pool(thread_num);
@@ -743,33 +774,34 @@ void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_upd
     #pragma omp parallel num_threads(thread_num)
     {
         #pragma omp for schedule(static) reduction(+:cnt)
-        for (unsigned int i = 0; i < dataset_rho_update.size(); ++i) {
-
+        for (unsigned int i = 0; i < dataset_rho_update.size(); ++i)
+        {
             // get id
             const unsigned int id = dataset_rho_update[i];
 
-            if (dataset[id].identifier == id_local_density_max) {
-
+            if (dataset[id].identifier == id_local_density_max)
+            {
                 // set itself as dep. point
                 dataset[id].dependent_distance = FLT_MAX;
                 dataset[id].dependent_point_id = id;
             }
-            else if (dataset[id].identifier == id_local_density_max_update) {
-
-                if (dataset[id].identifier == dat->identifier) {
-
+            else if (dataset[id].identifier == id_local_density_max_update)
+            {
+                if (dataset[id].identifier == dat->identifier)
+                {
                     // sort AkNN list
                     if (dataset[id].flag_pivot == 0) std::sort(knn_list.begin(), knn_list.end());
 
-                    for (unsigned int j = 0; j < knn_list.size(); ++j) {
-
+                    for (unsigned int j = 0; j < knn_list.size(); ++j)
+                    {
                         // get id_
                         const unsigned int id_ = knn_list[j].second;
 
                         // set dep. point
-                        if (dataset[id].local_density < dataset[id_].local_density) {
-
-                            if (dataset[id_].flag_active) {
+                        if (dataset[id].local_density < dataset[id_].local_density)
+                        {
+                            if (dataset[id_].flag_active)
+                            {
                                 dataset[id].dependent_distance = knn_list[j].first;
                                 dataset[id].dependent_point_id = id_;
                                 break;
@@ -777,26 +809,27 @@ void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_upd
                         }
                     }
                 }
-                else {
-
+                else
+                {
                     // get dependent point
                     const unsigned int id_ = dataset[id].dependent_point_id;
 
-                    if (dataset[id_].local_density < dataset[id].local_density) {
-
+                    if (dataset[id_].local_density < dataset[id].local_density)
+                    {
                         // init
                         dataset[id].dependent_point_id = id;
                         dataset[id].dependent_distance = FLT_MAX;
 
                         f = 1;
                     }
-                    else if (dataset[id].dependent_distance > cutoff * 2.0) {
+                    else if (dataset[id].dependent_distance > cutoff * 2.0)
+                    {
                         if (dataset[id].local_density > 5.0) f = 1;
                     }
                 }
             }
-            else {
-
+            else
+            {
                 local_pool[omp_get_thread_num()].insert(id);
 
                 // get dependent point
@@ -804,15 +837,18 @@ void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_upd
 
                 // update case
                 bool flag = 0;
-                if (dataset[id].local_density > dataset[id_].local_density) {
+                if (dataset[id].local_density > dataset[id_].local_density)
+                {
                     flag = 1;
                 }
-                else if (dataset[id].dependent_distance > cutoff * 2) {
+                else if (dataset[id].dependent_distance > cutoff * 2)
+                {
                     flag = 1;
                 }
 
                 // update dep. point
-                if (flag) {
+                if (flag)
+                {
                     dataset[id].dependent_point_id = id_local_density_max_update;
                     dataset[id].dependent_distance = 2 * cutoff;
                 }
@@ -823,17 +859,18 @@ void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_upd
         }
     }
 
-    if (f) {
-
+    if (f)
+    {
         ++cnt;
         get_dependent_point_scan(&dataset[id_local_density_max_update]);
     }
 
     // reduction
-    for (unsigned int i = 0; i < thread_num; ++i) {
-
+    for (unsigned int i = 0; i < thread_num; ++i)
+    {
         auto it = local_pool[i].begin();
-        while (it != local_pool[i].end()) {
+        while (it != local_pool[i].end())
+        {
             if (rnd_(mt_) <= 0.01) pool.erase(*it);
             ++it;
         }
@@ -850,8 +887,8 @@ void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_upd
 }
 
 // local density update (deletion case)
-void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat) {
-
+void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
+{
     // remove from pool
     pool.erase(dat->identifier);
 
@@ -882,8 +919,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
     visit.insert(start_node);
 
     /*** ANN search ***/
-    while (queue_nn.size() > 0) {
-
+    while (queue_nn.size() > 0)
+    {
         // get the top
         const unsigned int id = queue_nn[0];
 
@@ -894,14 +931,14 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
         id_min = id;
 
         // graph traversal
-        for (unsigned int i = 0; i < dataset[id].edges.size(); ++i) {
-
+        for (unsigned int i = 0; i < dataset[id].edges.size(); ++i)
+        {
             // get id
             const unsigned int id_ = dataset[id].edges[i];
 
             // visit check
-            if (visit.find(id_) == visit.end()) {
-
+            if (visit.find(id_) == visit.end())
+            {
                 // mark as visit
                 visit.insert(id_);
 
@@ -909,7 +946,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
                 distance = compute_distance(&dataset[id_], dat);
 
                 // NN update case
-                if (distance < threshold) {
+                if (distance < threshold)
+                {
                     threshold = distance;
                     id_min = id_;
                 }
@@ -924,12 +962,12 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
     }    
 
     // init queue
-    if (threshold <= cutoff * 1.5) {
-
-        if (dataset[id_min].flag_active) {
-
-            if (threshold <= cutoff) {
-
+    if (threshold <= cutoff * 1.5)
+    {
+        if (dataset[id_min].flag_active)
+        {
+            if (threshold <= cutoff)
+            {
                 // update local density
                 dataset[id_min].local_density -= 1.0;
 
@@ -946,8 +984,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
     }
 
     /*** range search ***/
-    while (queue_range.size() > 0) {
-
+    while (queue_range.size() > 0)
+    {
         // get the top
         const unsigned int id = queue_range[0];
 
@@ -955,8 +993,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
         queue_range.pop_front();
 
         // graph traversal
-        for (unsigned int i = 0; i < dataset[id].edges.size(); ++i) {
-
+        for (unsigned int i = 0; i < dataset[id].edges.size(); ++i)
+        {
             // get id
             const unsigned int id_ = dataset[id].edges[i];
 
@@ -969,8 +1007,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
                 // distance computation
                 const float distance = compute_distance(&dataset[id_], dat);
 
-                if (distance <= cutoff * 1.5) {
-
+                if (distance <= cutoff * 1.5)
+                {
                     // update queue
                     queue_range.push_back(id_);
 
@@ -978,8 +1016,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
                     dataset[id_].distance_temp = distance;
 
                     // update local density
-                    if (distance <= cutoff && dataset[id_].flag_active == 1) {
-
+                    if (distance <= cutoff && dataset[id_].flag_active == 1)
+                    {
                         dataset[id_].local_density -= 1.0;
                         dataset[id_].flag_update = 1;
                     }
@@ -994,8 +1032,8 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
     // verification
     #pragma omp parallel num_threads(thread_num)
     {
-        for (unsigned int i = 0; i < verification.size(); ++i) {
-
+        for (unsigned int i = 0; i < verification.size(); ++i)
+        {
             // get id
             const unsigned int id = verification[i];
 
@@ -1003,15 +1041,15 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
             if (dataset[id].distance_temp <= cutoff / 2.0) f = 1;
 
             #pragma omp for schedule(static)
-            for (unsigned int j = 0; j < dataset[id].member.size(); ++j) {
-
+            for (unsigned int j = 0; j < dataset[id].member.size(); ++j)
+            {
                 // get id_
                 const unsigned int id_ = dataset[id].member[j];
 
-                if (f) {
-
-                    if (dataset[id_].flag_active) {
-
+                if (f)
+                {
+                    if (dataset[id_].flag_active)
+                    {
                         // local density update
                         dataset[id_].local_density -= 1.0;
 
@@ -1019,14 +1057,14 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
                         dataset[id_].flag_update = 1;
                     }
                 }
-                else {
-
-                    if (dataset[id_].flag_active) {
-
+                else
+                {
+                    if (dataset[id_].flag_active)
+                    {
                         const float distance = compute_distance(dat, &dataset[id_]);
 
-                        if (distance <= cutoff) {
-
+                        if (distance <= cutoff)
+                        {
                             // local density update
                             dataset[id_].local_density -= 1.0;
 
@@ -1047,13 +1085,13 @@ void update_local_density_deletion(std::deque<data*> &dataset_active, data* dat)
 }
 
 // dependent point update (deletion case)
-void update_dependent_point_deletion(std::deque<data*> &dataset_active, data* dat) {
-
+void update_dependent_point_deletion(std::deque<data*> &dataset_active, data* dat)
+{
     // init local density
     dat->local_density = 0;
 
     // local array for object that needs dependency update
-    std::vector<std::vector<unsigned int>> dependecy_update_local(thread_num);
+    std::vector<std::vector<unsigned int>> dependency_update_local(thread_num);
 
     // local array for local_density_max
     std::vector<std::pair<float, unsigned int>> local_density_max_local(thread_num);
@@ -1064,17 +1102,17 @@ void update_dependent_point_deletion(std::deque<data*> &dataset_active, data* da
     #pragma omp parallel num_threads(thread_num)
     {
         #pragma omp for schedule(static)
-        for (unsigned int i = 0; i < dataset_active.size(); ++i) {
-
-            if (dataset_active[i]->flag_update == 0) {
-
+        for (unsigned int i = 0; i < dataset_active.size(); ++i)
+        {
+            if (dataset_active[i]->flag_update == 0)
+            {
                 // get id of dependent point
                 const unsigned int id = dataset_active[i]->dependent_point_id;
 
-                if (dataset_active[i]->local_density >= dataset[id].local_density) dependecy_update_local[omp_get_thread_num()].push_back(i);
+                if (dataset_active[i]->local_density >= dataset[id].local_density) dependency_update_local[omp_get_thread_num()].push_back(i);
             }
-            else {
-
+            else
+            {
                 // init flag
                 dataset_active[i]->flag_update = 0;
             }
@@ -1085,34 +1123,37 @@ void update_dependent_point_deletion(std::deque<data*> &dataset_active, data* da
     }
 
     // reduction
-    std::vector<unsigned int> dependecy_update;
-    for (unsigned int i = 0; i < thread_num; ++i) {
-
-        // merge dependecy_update_local
-        for (unsigned int j = 0; j < dependecy_update_local[i].size(); ++j) dependecy_update.push_back(dependecy_update_local[i][j]);
+    std::vector<unsigned int> dependency_update;
+    for (unsigned int i = 0; i < thread_num; ++i)
+    {
+        // merge dependency_update_local
+        for (unsigned int j = 0; j < dependency_update_local[i].size(); ++j) dependency_update.push_back(dependency_update_local[i][j]);
 
         // update local_density_max
-        if (local_density_max < local_density_max_local[i].first) {
+        if (local_density_max < local_density_max_local[i].first)
+        {
             local_density_max = local_density_max_local[i].first;
             id_local_density_max = local_density_max_local[i].second;
         }
     }
 
-    // update dependecy
+    // update dependency
     #pragma omp parallel num_threads(thread_num)
     {
         #pragma omp for schedule(dynamic)
-        for (unsigned int i = 0; i < dependecy_update.size(); ++i) {
-            dataset_active[dependecy_update[i]]->update_dependent_point(id_local_density_max);
+        for (unsigned int i = 0; i < dependency_update.size(); ++i)
+        {
+            dataset_active[dependency_update[i]]->update_dependent_point(id_local_density_max);
         }
     }
 
-    for (unsigned int i = 0; i < dependecy_update.size(); ++i) {
-
+    for (unsigned int i = 0; i < dependency_update.size(); ++i)
+    {
         // get id
-        const unsigned int id = dataset_active[dependecy_update[i]]->identifier;
+        const unsigned int id = dataset_active[dependency_update[i]]->identifier;
 
-        if (dataset[id].dependent_distance > cutoff * 2.0) {
+        if (dataset[id].dependent_distance > cutoff * 2.0)
+        {
             ++cnt;
             get_dependent_point(&dataset[id]);
         }
