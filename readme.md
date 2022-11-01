@@ -15,7 +15,7 @@
 * If you want to test a distance function other than L1 and L2, you can implement the function in `compute_distance()` in `data.hpp`.
 
 ## How to Run
-* Compile: `g++ -O3 -o amd-dpc.out main.cpp --std=c++14 -fopenmp -Wall`
+* Compile: `g++ -O3 -o amd-dpc.out main.cpp --std=c++14 -fopenmp`
    * .out file name can be arbitrary.
 * Run: `./amd-dpc.out`
 * We used Ubuntu 18.04 LTS.
