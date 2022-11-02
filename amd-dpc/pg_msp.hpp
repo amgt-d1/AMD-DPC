@@ -822,10 +822,10 @@ void update_dependent_point_insertion(std::vector<unsigned int> &dataset_rho_upd
 
                         f = 1;
                     }
-                    else if (dataset[id].dependent_distance > cutoff * 2.0)
-                    {
-                        if (dataset[id].local_density > 5.0) f = 1;
-                    }
+                    //else if (dataset[id].dependent_distance > cutoff * 2.0)
+                    //{
+                    //    if (dataset[id].local_density > 5.0) f = 1;
+                    //}
                 }
             }
             else
