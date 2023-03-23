@@ -35,7 +35,7 @@ If you use our implementation, please cite the following paper.
     title={Scalable and Accurate Density-Peaks Clustering on Fully Dynamic Data},  
     author={Amagata, Daichi},  
     booktitle={IEEE BigData},  
-    pages={xx--xx},  
+    pages={445--454},  
     year={2022}  
 }
 ```
